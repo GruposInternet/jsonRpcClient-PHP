@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Jsonrpcclient-php : JSON-RPC Client for PHP" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Jsonrpcclient-php</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/gsalvati/jsonRpcClient-PHP">View on GitHub</a>
+
+          <h1 id="project_title">Jsonrpcclient-php</h1>
+          <h2 id="project_tagline">JSON-RPC Client for PHP</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/gsalvati/jsonRpcClient-PHP/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/gsalvati/jsonRpcClient-PHP/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="jsonrpc-client-for-php" class="anchor" href="#jsonrpc-client-for-php"><span class="octicon octicon-link"></span></a>jsonRPC client for PHP</h1>
+
+<p>The jsonRPCclient class contains three public methods: the constructor jsonRPCClient-&gt;<strong>construct(), the jsonRPCClient-&gt;</strong>call() method, forwarding the requests to the JSON-RPC server, and the jsonRPCClient-&gt;setRPCNotification(), to establish if the requests are normal requests or notifications.</p>
+
+<h2>
+<a name="constructor" class="anchor" href="#constructor"><span class="octicon octicon-link"></span></a>Constructor</h2>
+
+<p>jsonRPCClient-&gt;__construct()</p>
+
+<p>jsonRPCClient-&gt;__construct() — Create a new jsonRPCClient object linking it to a JSON-RPC server</p>
+
+<h3>
+<a name="description" class="anchor" href="#description"><span class="octicon octicon-link"></span></a>Description</h3>
+
+<pre>
+class jsonRPCClient {
+__construct (string $url[, boolean $debug])
+}
+</pre>
+
+<p>Create a new jsonRPCClient object linking it to a JSON-RPC server. The created object contains all JSON-RPC service's methods, each with the same parameters, and the methods return the same service structured values.
+If required, setting to TRUE the $debug value, debugging informations are sent to the stdout.</p>
+
+<h3>
+<a name="parameters" class="anchor" href="#parameters"><span class="octicon octicon-link"></span></a>Parameters</h3>
+
+<p>url — The JSON-RPS service's URL.
+debug — I TRUE, output on the stdout the dialog between server and client. The default value is FALSE.</p>
+
+<h3>
+<a name="return" class="anchor" href="#return"><span class="octicon octicon-link"></span></a>Return</h3>
+
+<p>Return a jsonRPCClient object.</p>
+
+<h3>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h3>
+
+<pre>
+ 
+require_once 'jsonRPCClient.php'; 
+$myExample = new jsonRPCClient('http://somehostname/path/jsonRPCserver'); 
+
+</pre>
+
+<h2>
+<a name="magic-call" class="anchor" href="#magic-call"><span class="octicon octicon-link"></span></a>Magic Call</h2>
+
+<p>jsonRPCClient-&gt;__call()</p>
+
+<p>jsonRPCClient-&gt;__call() — Load any called method in the corresponding method of the JSON-RPC server, forwarding the given parameters</p>
+
+<h3>
+<a name="description-1" class="anchor" href="#description-1"><span class="octicon octicon-link"></span></a>Description</h3>
+
+<pre>
+class jsonRPCClient {
+mixed __call (string $method, array $params)
+}
+</pre>
+
+<p>Wathever be the called method for the jsonRPCClient object, __call() converts it in the JSON-RPC method with the same name. The parameters also are forwarded in a fully transaparent way.</p>
+
+<p>__call() is a magic method, it must NOT be called with its own name. It collect every method called (except the explicitely defined ones), converting them in the JSON-RPC form.</p>
+
+<h3>
+<a name="parameters-1" class="anchor" href="#parameters-1"><span class="octicon octicon-link"></span></a>Parameters</h3>
+
+<p>method — The name of the required method.
+params — The parameters set packaged as an array.</p>
+
+<h2>
+<a name="return-1" class="anchor" href="#return-1"><span class="octicon octicon-link"></span></a>Return</h2>
+
+<p>Return the structured value given by the called method. If the method is called as a notification, return TRUE.</p>
+
+<h3>
+<a name="example-1" class="anchor" href="#example-1"><span class="octicon octicon-link"></span></a>Example</h3>
+
+<pre>
+
+require_once 'jsonRPCClient.php'; 
+$myExample = new jsonRPCClient('http://somehostname/path/jsonRPCserver'); 
+
+try { 
+    echo 'Your name is <i>'.$myExample-&gt;giveMeSomeData('name').'</i><br>'."\n"; 
+    $myExample-&gt;changeYourState('I am using this function from the network');
+    echo 'Your status request has been accepted<br>'."\n"; 
+} catch (Exception $e) { 
+    echo nl2br($e-&gt;getMessage()).'<br>'."\n"; 
+} 
+
+</pre>
+
+<h2>
+<a name="note" class="anchor" href="#note"><span class="octicon octicon-link"></span></a>Note</h2>
+
+<p>Keep in mind the example: the __call() method isn't called explicitely. Instead, methods that aren't between the explicitely decalred methods of the class are called. These are the JSON-RPC service's methods.
+__call() collect every method request not coresponding to any explicitely declared method of the class and manage it as JSON-RPC requests. The parameters too are given as the JSON-RPC method requires, where __call() will package them in an array.
+In this way, the __call() method charges on itself the requests and act as a proxy to the JSON-RPC server.</p>
+
+<hr><h3>
+<a name="credits" class="anchor" href="#credits"><span class="octicon octicon-link"></span></a>Credits</h3>
+
+<p>Modified by Gian Carlo Salvati <a href="mailto:gian@salvati.com.br">gian@salvati.com.br</a></p>
+
+<p>Based on Sergio Vaccaro work - Copyright 2007 Sergio Vaccaro <a href="mailto:sergio@inservibile.org">sergio@inservibile.org</a> See <a href="http://jsonrpcphp.org/">http://jsonrpcphp.org/</a> for license, docs, sources and info.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Jsonrpcclient-php maintained by <a href="https://github.com/gsalvati">gsalvati</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
