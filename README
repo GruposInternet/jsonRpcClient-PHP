@@ -1,60 +1,74 @@
+# jsonRPC client for PHP
+
 The jsonRPCclient class contains three public methods: the constructor jsonRPCClient->__construct(), the jsonRPCClient->__call() method, forwarding the requests to the JSON-RPC server, and the jsonRPCClient->setRPCNotification(), to establish if the requests are normal requests or notifications.
+
+## Constructor 
 
 jsonRPCClient->__construct()
 
 jsonRPCClient->__construct() — Create a new jsonRPCClient object linking it to a JSON-RPC server
 
-Description
+### Description
 
+<pre>
 class jsonRPCClient {
 __construct (string $url[, boolean $debug])
 }
+</pre>
 
 Create a new jsonRPCClient object linking it to a JSON-RPC server. The created object contains all JSON-RPC service's methods, each with the same parameters, and the methods return the same service structured values.
 If required, setting to TRUE the $debug value, debugging informations are sent to the stdout.
 
-Parameters
+### Parameters
 
 url — The JSON-RPS service's URL.
 debug — I TRUE, output on the stdout the dialog between server and client. The default value is FALSE.
 
-Return
+### Return
 
 Return a jsonRPCClient object.
 
-Example
+### Example
 
-<?php 
+<pre>
+ 
 require_once 'jsonRPCClient.php'; 
 $myExample = new jsonRPCClient('http://somehostname/path/jsonRPCserver'); 
-?>
+
+</pre>
+
+
+## Magic Call
 
 jsonRPCClient->__call()
 
 jsonRPCClient->__call() — Load any called method in the corresponding method of the JSON-RPC server, forwarding the given parameters
 
-Descriptio
+### Description
 
+<pre>
 class jsonRPCClient {
 mixed __call (string $method, array $params)
 }
+</pre>
 
 Wathever be the called method for the jsonRPCClient object, __call() converts it in the JSON-RPC method with the same name. The parameters also are forwarded in a fully transaparent way.
 
 __call() is a magic method, it must NOT be called with its own name. It collect every method called (except the explicitely defined ones), converting them in the JSON-RPC form.
 
-Parameters
+### Parameters
 
 method — The name of the required method.
 params — The parameters set packaged as an array.
 
-Return
+## Return
 
 Return the structured value given by the called method. If the method is called as a notification, return TRUE.
 
-Example
+### Example
 
-<?php 
+<pre>
+
 require_once 'jsonRPCClient.php'; 
 $myExample = new jsonRPCClient('http://somehostname/path/jsonRPCserver'); 
 
@@ -65,61 +79,20 @@ try {
 } catch (Exception $e) { 
     echo nl2br($e->getMessage()).'<br />'."\n"; 
 } 
-?>
 
-Note
+</pre>
+
+## Note
 
 Keep in mind the example: the __call() method isn't called explicitely. Instead, methods that aren't between the explicitely decalred methods of the class are called. These are the JSON-RPC service's methods.
 __call() collect every method request not coresponding to any explicitely declared method of the class and manage it as JSON-RPC requests. The parameters too are given as the JSON-RPC method requires, where __call() will package them in an array.
 In this way, the __call() method charges on itself the requests and act as a proxy to the JSON-RPC server.
 
-jsonRPCClient->setRPCnotification()
 
-jsonRPCClient->setRPCnotification() — Set the internal state of the object, to determine if the requests are sent as normal requests or notifications
-
-Description
-
-class jsonRPCClient {
-void setRPCnotification() (boolean $notification)
-}
-
-If a notification form is needed (see http://json-rpc.org/wiki/specification, 1.3 Notification), a TRUE parameter must be sent to setRPCnotification(), before doing the request. From that moment every request will have the notification form.
-
-Send back a FALSE value to setRPCnotification() to restore the normal requests (with response).
-
-Parameters
-
-notification — A boolean value that should be TRUE if the requests must be notifications, FALSE if th requests must have a response.
-
-Example
-
-<?php 
-require_once 'jsonRPCClient.php'; 
-$myExample = new jsonRPCClient('http://somehostname/path/jsonRPCserver'); 
-
-try { 
-    echo 'Your name is <i>'.$myExample->giveMeSomeData('name').'</i><br />'."\n"; 
-    $myExample->setRPCnotification(true); 
-    $myExample->changeYourState('I am using this function from the network');
-    echo 'Your status request has been accepted<br />'."\n"; 
-    $myExample->setRPCnotification(false); 
-    echo 'Your personl attribute is <i>'.$myExample->giveMeSomeData('attr').'</i><br />'."\n"; 
-} catch (Exception $e) { 
-    echo nl2br($e->getMessage()).'<br />'."\n"; 
-} 
-?>
-
-Note
-
-In the method's requests there isn't a parameter indicating if the requests must be of the notification form, i.e., with no response.
-As default, every request is a request expecting a response.
-
-This happens to grant the best fit between the JSON-RPc method form and the object form. Moreover, notifications don't fit to the way to write code in PHP, where every operation has a returned value.
-
-For these reasons, setRPCnotification() has been prepared as a separated switch, to be intended as a state modifier.
+***
 
 
-
+### Credits
 
 Modified by Gian Carlo Salvati <gian@salvati.com.br>
 
